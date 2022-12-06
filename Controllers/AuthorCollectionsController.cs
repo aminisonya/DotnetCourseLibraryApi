@@ -20,13 +20,22 @@ public class AuthorCollectionsController : ControllerBase
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    // [HttpGet("({authorIds})")]
-    // public async Task<ActionResult<IEnumerable<AuthorForCreationDto>>> GetAuthorCollection(
-    //     [ModelBinder(BinderType = typeof(ArrayModelBinder))]
-    //     [FromRoute] IEnumerable<Guid> authorIds)
-    // {
-    //     var authorEntities = await _courseLibraryRepository.GetAuthorsAsync(authorIds);
-    // }
+    [HttpGet("({authorIds})", Name = "GetAuthorCollection")]
+    public async Task<ActionResult<IEnumerable<AuthorForCreationDto>>> GetAuthorCollection(
+        [ModelBinder(BinderType = typeof(ArrayModelBinder))]
+        [FromRoute] IEnumerable<Guid> authorIds)
+    {
+        var authorEntities = await _courseLibraryRepository.GetAuthorsAsync(authorIds);
+
+        // check if all authors have been found
+        if (authorIds.Count() != authorEntities.Count())
+        {
+            return NotFound();
+        }
+
+        var authorsToReturn = _mapper.Map<IEnumerable<AuthorDto>>(authorEntities);
+        return Ok(authorsToReturn);
+    }
 
     [HttpPost]
     public async Task<ActionResult<IEnumerable<AuthorDto>>> CreateAuthorCollection(IEnumerable<AuthorForCreationDto> authorCollection)
@@ -40,6 +49,11 @@ public class AuthorCollectionsController : ControllerBase
 
         await _courseLibraryRepository.SaveAsync();
 
-        return Ok();
+        var authorCollectionToReturn = _mapper.Map<IEnumerable<AuthorDto>>(authorEntities);
+        var authorIdsAsString = string.Join(",", authorCollectionToReturn.Select(a => a.Id));
+
+        return CreatedAtRoute("GetAuthorCollection",
+            new { authorIds = authorIdsAsString },
+            authorCollectionToReturn);
     }
 }
