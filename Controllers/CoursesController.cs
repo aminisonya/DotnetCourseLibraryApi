@@ -189,5 +189,4 @@ public class CoursesController : ControllerBase
 
         return (ActionResult)options.Value.InvalidModelStateResponseFactory(ControllerContext);
     }
-
 }

@@ -10,6 +10,7 @@ public interface ICourseLibraryRepository
     void UpdateCourse(Course course);
     void DeleteCourse(Course course);
     Task<IEnumerable<Author>> GetAuthorsAsync();
+    Task<IEnumerable<Author>> GetAuthorsAsync(string? mainCategory);
     Task<Author> GetAuthorAsync(Guid authorId);
     Task<IEnumerable<Author>> GetAuthorsAsync(IEnumerable<Guid> authorIds);
     void AddAuthor(Author author);
@@ -18,4 +19,3 @@ public interface ICourseLibraryRepository
     Task<bool> AuthorExistsAsync(Guid authorId);
     Task<bool> SaveAsync();
 }
-
