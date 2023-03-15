@@ -158,6 +158,15 @@ public class CourseLibraryRepository : ICourseLibraryRepository
                 || a.LastName.Contains(authorsResourceParameters.SearchQuery));
         }
 
+        if (!string.IsNullOrWhiteSpace(authorsResourceParameters.OrderBy))
+        {
+            if (authorsResourceParameters.OrderBy.ToLowerInvariant() == "name")
+            {
+                collection = collection.OrderBy(a => a.FirstName).
+                    ThenBy(a => a.LastName);
+            }
+        }
+
         return await PagedList<Author>.CreateAsync(collection,
             authorsResourceParameters.PageNumber,
             authorsResourceParameters.PageSize);
