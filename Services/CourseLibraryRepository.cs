@@ -167,6 +167,8 @@ public class CourseLibraryRepository : ICourseLibraryRepository
             }
         }
 
+        // collection = collection.ApplySort(authorsResourceParameters.OrderBy, _mappingDictionary);
+
         return await PagedList<Author>.CreateAsync(collection,
             authorsResourceParameters.PageNumber,
             authorsResourceParameters.PageSize);
